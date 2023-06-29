@@ -1,4 +1,8 @@
 FROM python:3.9
-WORKDIR /app
-COPY app/requirements.txt .
-RUN pip install -r requirements.txt
+WORKDIR /tweetApi/app
+
+COPY . .
+
+RUN pip install --upgrade pip
+
+CMD ["python", "main.py"]
