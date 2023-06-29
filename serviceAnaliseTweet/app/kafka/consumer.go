@@ -2,8 +2,10 @@ package kafka
 
 import (
 	"app/metric"
+	"app/repository"
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -35,7 +37,17 @@ func Listen() {
 
 		fmt.Println("Mensagem recebida: " + string(message.Value))
 
-		metric.GetMetricMessage(string(message.Value))
+		resultMessage, errMetric := metric.GetMetricMessage(string(message.Value))
+		if errMetric != nil {
+			log.Fatal("Erro ao recuperar a mensagem da analise:", errMetric)
+		}
+
+		errDb := repository.SaveMessageToMySQL(resultMessage)
+		if errDb != nil {
+			log.Fatal("Erro ao salvar a mensagem no MySQL:", errDb)
+		}
+
+		fmt.Println("Mensagem salva com sucesso no MySQL!")
 
 		err = reader.CommitMessages(context.Background(), message)
 		if err != nil {

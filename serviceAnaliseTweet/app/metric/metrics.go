@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"app/awsClient"
+	"app/repository"
 
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -25,17 +26,28 @@ func init() {
 	prometheus.MustRegister(sentimentCount)
 }
 
-func GetMetricMessage(message string) {
+func GetMetricMessage(message string) (*repository.Message, error) {
 
 	output, err := awsClient.AnaliseSentimento(message)
 	if err != nil {
 		fmt.Println("Erro ano analisar sentimento: ", err)
-		return
+		return nil, err
 	}
 
 	fmt.Print(output)
 
 	sentimentCount.WithLabelValues(*output.Sentiment).Inc()
+
+	messsageAnalyzed := &repository.Message{
+		Sentiment: output.Sentiment,
+		Tweet:     message,
+		Mixed:     output.SentimentScore.Mixed,
+		Negative:  output.SentimentScore.Negative,
+		Neutral:   output.SentimentScore.Neutral,
+		Positive:  output.SentimentScore.Positive,
+	}
+
+	return messsageAnalyzed, nil
 
 }
 
