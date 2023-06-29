@@ -1,2 +1,4 @@
 /.idea/
 /docker/env_file.env
+/docker/data/kafka1/
+/docker/data/zookeeper/

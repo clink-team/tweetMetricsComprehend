@@ -9,9 +9,7 @@ import (
 )
 
 func main() {
-	fmt.Print("Iniciando o servidor...ss")
-	// metric.GetMetric()
-	// http.ListenAndServe(":8080", nil)
+	fmt.Print("Iniciando o servidor...")
 
 	http.Handle("/metrics", promhttp.Handler())
 	go kafka.Listen()
