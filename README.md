@@ -35,7 +35,7 @@ Certifique-se de ter o Docker e o Docker Compose instalados em sua máquina ante
 
 ## Instalação e Configuração
 1. Clone este repositório em sua máquina:
-   git clone https://github.com/seu-usuario/tweetMetricsComprehend.git
+   git clone https://github.com/GaberRB/tweetMetricsComprehend.git
 
 2. Navegue até o diretório clonado:
    cd tweetMetricsComprehend/docker
