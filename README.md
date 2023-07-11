@@ -62,6 +62,9 @@ Certifique-se de ter o Docker e o Docker Compose instalados em sua máquina ante
 
 9. Após a importação, você poderá visualizar as métricas de sentimentos e acompanhar a repercussão da marca no Twitter.
 
+    ![image](https://github.com/GaberRB/tweetMetricsComprehend/assets/28874479/740f46d2-7083-4010-ad2c-8d4f32644b65)
+
+
 ## Contribuição
 Contribuições são bem-vindas! Se você quiser contribuir para o projeto, sinta-se à vontade para abrir uma issue ou enviar um pull request.
 
