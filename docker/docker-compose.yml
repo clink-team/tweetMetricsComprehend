@@ -60,6 +60,19 @@ services:
       - kafdrop
       - kafka1
       - zookeeper
+      - python-server
+  python-server:
+    build:
+      context: ..
+      dockerfile: tweetApi/Dockerfile
+    env_file:
+      - ./env_file.env
+    environment:
+      - KAFKA_URL=kafka1:19091
+    depends_on:
+      - kafdrop
+      - kafka1
+      - zookeeper
   prometheus:
     image: prom/prometheus:latest
     volumes:

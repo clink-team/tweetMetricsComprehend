@@ -18,7 +18,7 @@ func Listen() {
 	config := kafka.ReaderConfig{
 		Brokers:        []string{kafkaURL},
 		GroupID:        "groupId",
-		Topic:          "tweets-topico",
+		Topic:          "producer-twitter",
 		MinBytes:       10e3, // 10KB
 		MaxBytes:       10e6, // 10MB
 		MaxWait:        time.Second * 1,

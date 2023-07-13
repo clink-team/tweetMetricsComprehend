@@ -1,8 +1,10 @@
 FROM python:3.9
-WORKDIR /tweetApi/app
+WORKDIR /app
 
-COPY . .
+COPY tweetApi/app/requirements.txt .
 
-RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY tweetApi/app .
 
 CMD ["python", "main.py"]
