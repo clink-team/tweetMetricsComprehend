@@ -15,8 +15,8 @@ def task():
     kafka_server = os.environ.get("KAFKA_URL")
     print(f"kafka_server:::::>>  {kafka_server}")
     topic = "producer-twitter"
-    max_retries = 10  # Defina o número máximo de tentativas de conexão
-    retry_delay = 5  # Defina o tempo de espera entre as tentativas de conexão
+    max_retries = 10
+    retry_delay = 5
     retry_count = 0
 
     def auth():
@@ -40,6 +40,7 @@ def task():
 
     while True:
         try:
+            print("Iniciando a conexão com o kafka")
             producer = KafkaProducer(bootstrap_servers=kafka_server, value_serializer=lambda v: json.dumps(v).encode("utf-8"))
             break  # Se a conexão for bem-sucedida, saia do loop de retry
         except Exception as e:
@@ -51,7 +52,9 @@ def task():
             retry_count += 1
 
     while True:
-        search_query = "'itau''boleto' -filter:retweets AND -filter:replies AND -filter:links"
+
+        search_query = "'casimiro' -filter:retweets AND -filter:replies AND -filter:links"
+        print(f"Iniciando busca dos tweets query: {search_query}")
         tweets = api.search_tweets(q=search_query, count=1, tweet_mode='extended', max_id=max_id)
 
         for tweet in tweets:
@@ -73,5 +76,5 @@ def task():
 
         sleep(30)
 
-if __name__ == '__main__':
-    task()
+
+task()
