@@ -39,12 +39,27 @@ Certifique-se de ter o Docker e o Docker Compose instalados em sua máquina ante
 
 2. Navegue até o diretório clonado:
    cd tweetMetricsComprehend/docker
+   crie o arquivo env_file.env
+   
+   Cole essa estrutura no arquivo env_file.env e lembre-se utilizar suas credencias para teste
+   AWS_ACCESS_KEY_ID=<SEUTOKEN>
+   AWS_SECRET_ACCESS_KEY=<SEUTOKEN>
+   DB_URL=db-mysql
+   DB_PORT=3306
+   DB_USER=root
+   DB_PASSWORD=1234
+   DB_DATABASE=tweetmetrics
+   CONSUMER_KEY = <SEUTOKEN>
+   CONSUMER_SECRET = <SEUTOKEN>
+   ACESS_TOKEN = <SEUTOKEN>
+   ACESS_TOKEN_SECRET = <SEUTOKEN>
+   BEARER_TOKEN = <SEUTOKEN>
 
-3. Execute o Docker Compose para iniciar os serviços:
+4. Execute o Docker Compose para iniciar os serviços:
    docker-compose up -d
 
-4. Aguarde até que todos os serviços estejam em execução.
-5. Após subida do ambiente aqui está a lista de acessos do localhost
+5. Aguarde até que todos os serviços estejam em execução.
+6. Após subida do ambiente aqui está a lista de acessos do localhost
   - Kafdrop: Acesse o Kafdrop em http://localhost:9000 para visualizar e explorar os tópicos e mensagens do Kafka.
 
   - Prometheus: Acesse o Prometheus em http://localhost:9090 para visualizar as métricas coletadas do Kafka.
