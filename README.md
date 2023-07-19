@@ -42,18 +42,19 @@ Certifique-se de ter o Docker e o Docker Compose instalados em sua máquina ante
    crie o arquivo env_file.env
    
    Cole essa estrutura no arquivo env_file.env e lembre-se utilizar suas credencias para teste
-   AWS_ACCESS_KEY_ID=<SEUTOKEN>
-   AWS_SECRET_ACCESS_KEY=<SEUTOKEN>
-   DB_URL=db-mysql
-   DB_PORT=3306
-   DB_USER=root
-   DB_PASSWORD=1234
-   DB_DATABASE=tweetmetrics
-   CONSUMER_KEY = <SEUTOKEN>
-   CONSUMER_SECRET = <SEUTOKEN>
-   ACESS_TOKEN = <SEUTOKEN>
-   ACESS_TOKEN_SECRET = <SEUTOKEN>
-   BEARER_TOKEN = <SEUTOKEN>
+   
+   AWS_ACCESS_KEY_ID=SEUTOKEN   
+   AWS_SECRET_ACCESS_KEY=SEUTOKEN   
+   DB_URL=db-mysql  
+   DB_PORT=3306 
+   DB_USER=root   
+   DB_PASSWORD=1234   
+   DB_DATABASE=tweetmetrics  
+   CONSUMER_KEY = SEUTOKEN  
+   CONSUMER_SECRET = SEUTOKEN  
+   ACESS_TOKEN = SEUTOKEN   
+   ACESS_TOKEN_SECRET = SEUTOKEN  
+   BEARER_TOKEN = SEUTOKEN
 
 4. Execute o Docker Compose para iniciar os serviços:
    docker-compose up -d
