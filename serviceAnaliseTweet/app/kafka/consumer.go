@@ -55,3 +55,47 @@ func Listen() {
 		}
 	}
 }
+
+func ListenNaverSearch() {
+	kafkaURL := os.Getenv("KAFKA_URL")
+
+	config := kafka.ReaderConfig{
+		Brokers:        []string{kafkaURL},
+		GroupID:        "groupId",
+		Topic:          "producer-naver-search",
+		MinBytes:       10e3, // 10KB
+		MaxBytes:       10e6, // 10MB
+		MaxWait:        time.Second * 1,
+		CommitInterval: time.Second * 1,
+	}
+
+	reader := kafka.NewReader(config)
+	defer reader.Close()
+
+	for {
+		message, err := reader.ReadMessage(context.Background())
+		if err != nil {
+			fmt.Println("Failed to read message: ", err)
+			continue
+		}
+
+		fmt.Println("Message received: " + string(message.Value))
+
+		resultMessage, errMetric := metric.GetMetricMessage(string(message.Value))
+		if errMetric != nil {
+			log.Fatal("Error retrieving analysis message:", errMetric)
+		}
+
+		errDb := repository.SaveMessageToMySQL(resultMessage)
+		if errDb != nil {
+			log.Fatal("Error saving message in MySQL:", errDb)
+		}
+
+		fmt.Println("Message successfully saved in MySQL!")
+
+		err = reader.CommitMessages(context.Background(), message)
+		if err != nil {
+			fmt.Println("Failed to mark message as consumed: ", err)
+		}
+	}
+}
