@@ -10,7 +10,7 @@ import (
 
 func AnaliseSentimento(texto string) (*comprehend.DetectSentimentOutput, error) {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("us-east-1"),
+		Region: aws.String("ap-northeast-2"),
 	})
 
 	if err != nil {

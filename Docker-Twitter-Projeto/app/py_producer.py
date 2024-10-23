@@ -4,10 +4,10 @@ from time import sleep
 from kafka.producer import KafkaProducer
 import tweepy
 
-consumer_key = ''
-consumer_secret = ''
-access_token = ''
-access_token_secret = ''
+consumer_key = 'maj0SoKRqYqtA08BdSQzTXojj'
+consumer_secret = 'ZpzBIeQyHwFc4ozE480nFEg64jueQPISPFMtige8EFfjFZevJc'
+access_token = '147812703-ImpvYP6LkPtWeF0low6Oi7S4xPqVTQ8pBdmZp9z'
+access_token_secret = '6PFbrC1LqNH1sLmbCDCKXY3fTb4Da8Zz0821yF6n84TTF'
 processed_tweets_file = "processed_tweets_file"
 
 def task():

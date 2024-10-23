@@ -4,6 +4,9 @@ import os
 from time import sleep
 from kafka.producer import KafkaProducer
 import tweepy
+import sys
+import urllib.request
+import json
 
 consumer_key = os.environ.get("CONSUMER_KEY")
 consumer_secret = os.environ.get("CONSUMER_SECRET")
@@ -76,5 +79,81 @@ def task():
 
         sleep(30)
 
+# task()
 
-task()
+client_id = os.environ.get("CLIENT_ID")
+client_secret = os.environ.get("CLIENT_SECRET")
+processed_naver_search_results_file = "processed_naver_search_results_file"
+
+def task_naver_search(client_id, client_secret, query, display=10, start=1, sort='sim'):
+    kafka_server = os.environ.get("KAFKA_URL")
+    print(f"kafka_server:::::>>  {kafka_server}")
+    topic = "producer-naver-search"
+    try_once = True # FIXME for test only
+    max_retries = 10
+    retry_delay = 5
+    retry_count = 0
+
+    def load_processed_naver_search_results():
+        if not os.path.isfile(processed_naver_search_results_file):
+            return set()
+        with open(processed_naver_search_results_file, "r") as file:
+            return set(file.read().splitlines())
+
+    def save_processed_naver_search_results(processed_naver_search_results):
+        with open(processed_naver_search_results_file, "w") as file:
+            file.write("\n".join(processed_naver_search_results))
+
+    processed_naver_search_results = load_processed_naver_search_results()
+
+    while True:
+        try:
+            print("Starting the connection with Kafka")
+            producer = KafkaProducer(bootstrap_servers=kafka_server, value_serializer=lambda v: json.dumps(v).encode("utf-8"))
+            break  # If the connection is successful, exit the retry loop
+        except Exception as e:
+            if retry_count >= max_retries:
+                print("Exceeded the maximum number of connection attempts. Leaving...")
+                raise e
+            print(f"Error connecting to Kafka broker. Trying again at {retry_delay} seconds...")
+            sleep(retry_delay)
+            retry_count += 1
+
+    while True:
+
+        encText = urllib.parse.quote(query)
+        url = "https://openapi.naver.com/v1/search/news?query=" + encText + \
+        "&display=" + str(display) + "&start=" + str(start) + "&sort=" + sort
+        print(f"Starting naver search query: {url}")
+
+        request = urllib.request.Request(url)
+        request.add_header("X-Naver-Client-Id",client_id)
+        request.add_header("X-Naver-Client-Secret",client_secret)
+        response = urllib.request.urlopen(request)
+        rescode = response.getcode()
+        if(rescode==200):
+            response_body = response.read()
+            response_json = json.loads(response_body)
+
+            items = response_json['items']
+            for item in items:
+                link = item['link']
+                
+                if link not in processed_naver_search_results:
+                    print(item)
+                    producer.send(topic, value=item['description'])
+                    producer.flush()
+                    processed_naver_search_results.add(link)
+                    print(f"Search result with link {link} sent to Kafka.")
+
+            save_processed_naver_search_results(processed_naver_search_results)
+
+            sleep(30)
+            
+            if try_once:
+                break
+        else:
+            print("Error Code:" + rescode)
+
+query = '테슬라' # FIXME for test only
+task_naver_search(client_id, client_secret, query)
