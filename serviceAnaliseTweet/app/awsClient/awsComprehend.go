@@ -8,13 +8,38 @@ import (
 	"github.com/aws/aws-sdk-go/service/comprehend"
 )
 
+// func AnaliseSentimento(texto string) (*comprehend.DetectSentimentOutput, error) {
+// 	sess, err := session.NewSession(&aws.Config{
+// 		Region: aws.String("us-east-1"),
+// 	})
+
+// 	if err != nil {
+// 		fmt.Println("Erro ao criar sessão da AWS:", err)
+// 		return nil, err
+// 	}
+
+// 	comprehendClient := comprehend.New(sess)
+
+// 	input := &comprehend.DetectSentimentInput{
+// 		Text:         aws.String(texto),
+// 		LanguageCode: aws.String("pt"),
+// 	}
+
+// 	output, err := comprehendClient.DetectSentiment(input)
+// 	if err != nil {
+// 		fmt.Println("Erro ao analisar sentimento:", err)
+// 		return nil, err
+// 	}
+
+// 	return output, nil
+// }
 func AnaliseSentimento(texto string) (*comprehend.DetectSentimentOutput, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String("ap-northeast-2"),
 	})
 
 	if err != nil {
-		fmt.Println("Erro ao criar sessão da AWS:", err)
+		fmt.Println("Error creating AWS session:", err)
 		return nil, err
 	}
 
@@ -22,12 +47,12 @@ func AnaliseSentimento(texto string) (*comprehend.DetectSentimentOutput, error) 
 
 	input := &comprehend.DetectSentimentInput{
 		Text:         aws.String(texto),
-		LanguageCode: aws.String("pt"),
+		LanguageCode: aws.String("ko"),
 	}
 
 	output, err := comprehendClient.DetectSentiment(input)
 	if err != nil {
-		fmt.Println("Erro ao analisar sentimento:", err)
+		fmt.Println("Error analyzing sentiment:", err)
 		return nil, err
 	}
 

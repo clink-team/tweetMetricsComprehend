@@ -94,7 +94,7 @@ services:
       - prometheus
   db-mysql:
     hostname: db-mysql
-    image: mysql:latest
+    image: mysql:8.3
     expose:
       - "3308"
     command: mysqld --default-authentication-plugin=mysql_native_password

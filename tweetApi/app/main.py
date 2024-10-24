@@ -7,6 +7,7 @@ import tweepy
 import sys
 import urllib.request
 import json
+import requests
 
 consumer_key = os.environ.get("CONSUMER_KEY")
 consumer_secret = os.environ.get("CONSUMER_SECRET")
@@ -79,7 +80,9 @@ def task():
 
         sleep(30)
 
+
 # task()
+
 
 client_id = os.environ.get("CLIENT_ID")
 client_secret = os.environ.get("CLIENT_SECRET")
@@ -89,7 +92,7 @@ def task_naver_search(client_id, client_secret, query, display=10, start=1, sort
     kafka_server = os.environ.get("KAFKA_URL")
     print(f"kafka_server:::::>>  {kafka_server}")
     topic = "producer-naver-search"
-    try_once = True # FIXME for test only
+    try_once = False # FIXME for testing only
     max_retries = 10
     retry_delay = 5
     retry_count = 0
@@ -119,29 +122,65 @@ def task_naver_search(client_id, client_secret, query, display=10, start=1, sort
             sleep(retry_delay)
             retry_count += 1
 
+    # while True:
+
+    #     encText = urllib.parse.quote(query)
+    #     url = "https://openapi.naver.com/v1/search/cafearticle?query=" + encText + \
+    #             "&display=" + str(display) + "&start=" + str(start) + "&sort=" + sort
+    #     print(f"Starting naver search query: {url}")
+
+    #     request = urllib.request.Request(url)
+    #     request.add_header("X-Naver-Client-Id",client_id)
+    #     request.add_header("X-Naver-Client-Secret",client_secret)
+    #     response = urllib.request.urlopen(request)
+    #     rescode = response.getcode()
+    #     if(rescode==200):
+    #         response_body = response.read()
+    #         response_json = json.loads(response_body)
+
+    #         items = response_json['items']
+    #         for item in items:
+    #             link = item['link']
+                
+    #             if link not in processed_naver_search_results:
+    #                 print(item)
+    #                 producer.send(topic, value=item['description'])
+    #                 producer.flush()
+    #                 processed_naver_search_results.add(link)
+    #                 print(f"Search result with link {link} sent to Kafka.")
+
+    #         save_processed_naver_search_results(processed_naver_search_results)
+
+    #         sleep(30)
+            
+    #         if try_once:
+    #             break
+    #     else:
+    #         print("Error Code:" + rescode)
     while True:
+        base_url = "https://openapi.naver.com/v1/search/cafearticle"
+        headers = {
+            "X-Naver-Client-Id": client_id,
+            "X-Naver-Client-Secret": client_secret
+        }
+        params = {
+            "query": query,
+            "display": display,
+            "start": start,
+            "sort": sort
+        }
 
-        encText = urllib.parse.quote(query)
-        url = "https://openapi.naver.com/v1/search/news?query=" + encText + \
-        "&display=" + str(display) + "&start=" + str(start) + "&sort=" + sort
-        print(f"Starting naver search query: {url}")
-
-        request = urllib.request.Request(url)
-        request.add_header("X-Naver-Client-Id",client_id)
-        request.add_header("X-Naver-Client-Secret",client_secret)
-        response = urllib.request.urlopen(request)
-        rescode = response.getcode()
-        if(rescode==200):
-            response_body = response.read()
-            response_json = json.loads(response_body)
-
-            items = response_json['items']
+        response = requests.get(base_url, headers=headers, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            items = data['items']
             for item in items:
                 link = item['link']
                 
                 if link not in processed_naver_search_results:
                     print(item)
-                    producer.send(topic, value=item['description'])
+                    producer.send(topic, value=item['title'])
+                    # producer.send(topic, value=item['description'])
                     producer.flush()
                     processed_naver_search_results.add(link)
                     print(f"Search result with link {link} sent to Kafka.")
@@ -153,7 +192,11 @@ def task_naver_search(client_id, client_secret, query, display=10, start=1, sort
             if try_once:
                 break
         else:
-            print("Error Code:" + rescode)
+            print(f'Error: {response.status_code}')
 
-query = '테슬라' # FIXME for test only
-task_naver_search(client_id, client_secret, query)
+query = '전기차' # FIXME for testing only
+display=100
+start=1
+sort='sim'
+
+task_naver_search(client_id, client_secret, query, display, start, sort)
